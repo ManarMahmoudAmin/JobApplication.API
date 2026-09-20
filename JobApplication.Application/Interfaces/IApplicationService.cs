@@ -10,5 +10,6 @@ namespace JobApplication.Application.Interfaces
     {
         Task<CandidateApplicationDto> Apply(int candidateId, int jobId);
         Task UpdateStatus(int candidateId, int jobId, ApplicationStatus newStatus, int recruiterId);
+        Task Cancel(int id, int requesterId);
     }
 }

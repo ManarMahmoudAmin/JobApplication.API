@@ -8,6 +8,7 @@ namespace JobApplication.Domain.Entities
 {
     public class CandidateApplication
     {
+        public int Id { get; set; }
         public int CandidateId { get; set; }
         public Candidate Candidate { get; set; }
         public int JobId { get; set; }
@@ -15,5 +16,6 @@ namespace JobApplication.Domain.Entities
         public ApplicationStatus ApplicationStatus { get; set; }
         public DateTime AppliedAt { get; set; }
         public DateTime StatusUpdatedAt { get; set; }
+        public DateTime? CancelledAt { get; set; }
     }
 }

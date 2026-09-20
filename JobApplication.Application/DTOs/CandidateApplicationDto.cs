@@ -7,6 +7,7 @@ namespace JobApplication.Application.DTOs
 {
     public class CandidateApplicationDto
     {
+        public int Id { get; set; }
         public int CandidateId { get; set; }
         public int JobId { get; set; }
         public ApplicationStatus ApplicationStatus { get; set; }

@@ -47,6 +47,7 @@ namespace JobApplication.Application.Services
 
             return new CandidateApplicationDto
             {
+                Id = application.Id,
                 CandidateId = application.CandidateId,
                 JobId = application.JobId,
                 ApplicationStatus = application.ApplicationStatus,
@@ -70,6 +71,29 @@ namespace JobApplication.Application.Services
 
             // Update application status
             application.ApplicationStatus = newStatus;
+            application.StatusUpdatedAt = DateTime.UtcNow;
+
+            _applicationRepository.Update(application);
+            await _applicationRepository.SaveChangesAsync();
+        }
+
+        public async Task Cancel(int id, int requesterId)
+        {
+            var application = await _applicationRepository.GetByIdAsync(id);
+
+            if (application == null)
+                throw new InvalidOperationException("Application not found.");
+
+            if (application.CandidateId != requesterId)
+                throw new UnauthorizedAccessException("You are not the owner of this application.");
+
+            if (application.ApplicationStatus != ApplicationStatus.Applied &&
+                application.ApplicationStatus != ApplicationStatus.UnderReview)
+                throw new InvalidOperationException(
+                    "Application cannot be cancelled.");
+
+            application.ApplicationStatus = ApplicationStatus.Cancelled;
+            application.CancelledAt = DateTime.UtcNow;
             application.StatusUpdatedAt = DateTime.UtcNow;
 
             _applicationRepository.Update(application);

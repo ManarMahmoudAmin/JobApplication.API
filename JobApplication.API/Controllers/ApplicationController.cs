@@ -55,5 +55,33 @@ namespace JobApplication.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Candidate")]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            var candidateIdClaim =
+                User.FindFirstValue("CandidateId");
+
+            if (candidateIdClaim == null)
+                return Forbid();
+
+            var candidateId = int.Parse(candidateIdClaim);
+
+            try
+            {
+                await _applicationService.Cancel(id, candidateId);
+
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

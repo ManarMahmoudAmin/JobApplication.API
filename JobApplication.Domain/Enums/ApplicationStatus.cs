@@ -10,6 +10,7 @@ namespace JobApplication.Domain.Enums
         UnderReview,
         Interview,
         Accepted,
-        Rejected
+        Rejected,
+        Cancelled
     }
 }

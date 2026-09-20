@@ -11,11 +11,12 @@ namespace JobApplication.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<CandidateApplication> builder)
         {
-            builder.HasKey(ca => new
+            builder.HasKey(ca => ca.Id);
+            builder.HasIndex(ca => new
             {
                 ca.CandidateId,
                 ca.JobId
-            });
+            }).IsUnique();
         }
     }
 }
