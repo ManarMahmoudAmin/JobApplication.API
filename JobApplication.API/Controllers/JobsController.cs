@@ -1,9 +1,6 @@
 ﻿using JobApplication.Application.DTOs;
 using JobApplication.Application.Interfaces;
-using JobApplication.Application.Services;
-using JobApplication.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -36,5 +33,31 @@ namespace JobApplication.API.Controllers
             return Ok(job);
         }
 
+        [HttpPut("{id}/close")]
+        public async Task<IActionResult> CloseJob(int id)
+        {
+            var recruiterIdClaim =
+                User.FindFirstValue("RecruiterId");
+
+            if (recruiterIdClaim == null)
+                return Forbid();
+
+            var recruiterId = int.Parse(recruiterIdClaim);
+
+            try
+            {
+                await _jobService.CloseAsync(id, recruiterId);
+
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

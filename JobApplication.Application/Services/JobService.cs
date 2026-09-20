@@ -43,5 +43,30 @@ namespace JobApplication.Application.Services
                 IsActive = job.IsActive
             };
         }
+
+        public async Task CloseAsync(int jobId, int recruiterId)
+        {
+            var job = await _repo.GetByIdAsync(jobId);
+
+            if (job == null)
+                throw new InvalidOperationException(
+                    "Job not found.");
+
+            if (job.RecruiterId != recruiterId)
+                throw new UnauthorizedAccessException(
+                    "You are not the owner of this job.");
+
+            // Check if the job is already closed
+            if (!job.IsActive)
+                throw new InvalidOperationException(
+                    "Job is already closed.");
+
+            job.IsActive = false;
+            job.ClosedAt = DateTime.UtcNow;
+            job.ClosedBy = recruiterId;
+
+            _repo.Update(job);
+            await _repo.SaveChangesAsync();
+        }
     }
 }
