@@ -17,9 +17,9 @@ namespace JobApplication.API
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateJob(CreateJobDto createJobDto)
+        public async Task<IActionResult> AddJob(CreateJobDto createJobDto)
         {
-            var job = await _jobService.CreateJobAsync(createJobDto);
+            var job = await _jobService.AddJobAsync(createJobDto);
             return Ok();
         }
     }

@@ -7,6 +7,6 @@ namespace JobApplication.Application.Interfaces
 {
     public interface IJobService
     {
-        Task<JobDto> CreateJobAsync(CreateJobDto createJobDto);
+        Task<JobDto> AddJobAsync(CreateJobDto createJobDto);
     }
 }

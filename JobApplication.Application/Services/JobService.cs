@@ -9,14 +9,14 @@ namespace JobApplication.Application.Services
 {
     public class JobService : IJobService
     {
-        private readonly IJobRepository _repo;
+        private readonly IGenericRepository<Job> _repo;
 
-        public JobService(IJobRepository repo)
+        public JobService(IGenericRepository<Job> repo)
         {
             _repo = repo;
         }
 
-        public async Task<JobDto> CreateJobAsync(CreateJobDto createJobDto)
+        public async Task<JobDto> AddJobAsync(CreateJobDto createJobDto)
         {
             var job = new Job
             {
@@ -24,7 +24,8 @@ namespace JobApplication.Application.Services
                 Description = createJobDto.Description,
                 IsActive = true
             };
-            await _repo.CreateAsync(job);
+            await _repo.AddAsync(job);
+            await _repo.SaveChangesAsync();
 
             return new JobDto
             {
