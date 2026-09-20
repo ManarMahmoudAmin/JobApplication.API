@@ -11,5 +11,8 @@ namespace JobApplication.Domain.Entities
         public string Title { get; set; }
         public string Description { get; set; }
         public bool IsActive { get; set; }
+        public int RecruiterId { get; set; }
+        public Recruiter Recruiter { get; set; }
+
     }
 }

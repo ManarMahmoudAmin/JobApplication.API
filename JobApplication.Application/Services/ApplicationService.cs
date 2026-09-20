@@ -55,6 +55,8 @@ namespace JobApplication.Application.Services
             };
         }
 
+       
+
         private async Task ExistsAsync(int candidateId, int jobId)
         {
             var applied = await _applicationRepository.ExistsAsync(candidateId, jobId);

@@ -23,6 +23,7 @@ namespace JobApplication.Infrastructure.Persistence
         public DbSet<Candidate> Candidates { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<CandidateApplication> CandidateApplications { get; set; }
+        public DbSet<Recruiter> Recruiters { get; set; }
 
     }
 }
