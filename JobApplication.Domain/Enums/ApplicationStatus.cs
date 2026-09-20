@@ -4,7 +4,7 @@ using System.Text;
 
 namespace JobApplication.Domain.Enums
 {
-    internal enum ApplicationStatus
+    public enum ApplicationStatus
     {
         Applied,
         UnderReview,
