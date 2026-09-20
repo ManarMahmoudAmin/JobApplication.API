@@ -4,7 +4,7 @@ using System.Text;
 
 namespace JobApplication.Domain.Entities
 {
-    internal class Candidate
+    public class Candidate
     {
         public int Id { get; set; }
         public string Name { get; set; }

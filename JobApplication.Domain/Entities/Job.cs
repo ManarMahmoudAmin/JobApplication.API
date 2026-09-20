@@ -4,8 +4,7 @@ using System.Text;
 
 namespace JobApplication.Domain.Entities
 {
-{
-    internal class Job
+    public class Job
     {
 
         public int Id { get; set; }
