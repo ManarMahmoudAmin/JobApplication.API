@@ -7,7 +7,7 @@ using System.Text;
 
 namespace JobApplication.Application.Services
 {
-    internal class JobService : IJobService
+    public class JobService : IJobService
     {
         private readonly IJobRepository _repo;
 

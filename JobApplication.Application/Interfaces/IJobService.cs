@@ -5,7 +5,7 @@ using System.Text;
 
 namespace JobApplication.Application.Interfaces
 {
-    internal interface IJobService
+    public interface IJobService
     {
         Task<JobDto> CreateJobAsync(CreateJobDto createJobDto);
     }

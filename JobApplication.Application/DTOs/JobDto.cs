@@ -4,7 +4,7 @@ using System.Text;
 
 namespace JobApplication.Application.DTOs
 {
-    internal class JobDto
+    public class JobDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
