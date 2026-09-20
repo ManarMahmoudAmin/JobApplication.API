@@ -7,6 +7,6 @@ namespace JobApplication.Domain.Entities
 {
     public class ApplicationUser : IdentityUser
     {
-        public int CandidateId { get; set; }
+        public int? CandidateId { get; set; }
     }
 }

@@ -5,8 +5,9 @@ using System.Text;
 
 namespace JobApplication.Application.Interfaces
 {
-    public interface IApplicationService
+    public interface IAuthService
     {
-        Task<CandidateApplicationDto> Apply(int candidateId, int jobId);
+        Task RegisterAsync(RegisterDto dto);
+        Task<string?> LoginAsync(LoginDto dto);
     }
 }

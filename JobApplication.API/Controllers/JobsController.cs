@@ -3,7 +3,7 @@ using JobApplication.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobApplication.API
+namespace JobApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

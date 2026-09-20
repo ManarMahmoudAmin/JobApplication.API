@@ -1,4 +1,5 @@
-﻿using JobApplication.Application.Interfaces;
+﻿using JobApplication.Application.DTOs;
+using JobApplication.Application.Interfaces;
 using JobApplication.Domain.Entities;
 using JobApplication.Domain.Enums;
 using System;
@@ -16,7 +17,7 @@ namespace JobApplication.Application.Services
             _applicationRepository = applicationRepository;
         }
 
-        public async Task Apply(int candidateId, int jobId)
+        public async Task<CandidateApplicationDto> Apply(int candidateId, int jobId)
         {
             var job = await _applicationRepository.GetJobByIdAsync(jobId);
 
@@ -43,6 +44,15 @@ namespace JobApplication.Application.Services
 
             await _applicationRepository.AddAsync(application);
             await _applicationRepository.SaveChangesAsync();
+
+            return new CandidateApplicationDto
+            {
+                CandidateId = application.CandidateId,
+                JobId = application.JobId,
+                ApplicationStatus = application.ApplicationStatus,
+                AppliedAt = application.AppliedAt,
+                StatusUpdatedAt = application.StatusUpdatedAt
+            };
         }
 
         private async Task ExistsAsync(int candidateId, int jobId)
