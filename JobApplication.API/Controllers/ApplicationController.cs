@@ -1,4 +1,5 @@
 ﻿using JobApplication.Application.Interfaces;
+using JobApplication.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -8,7 +9,6 @@ namespace JobApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ApplicationController : ControllerBase
     {
         private readonly IApplicationService _applicationService;
@@ -19,6 +19,7 @@ namespace JobApplication.API.Controllers
         }
 
         [HttpPost("apply/{jobId}")]
+        [Authorize(Roles = "Candidate")]
         public async Task<IActionResult> Apply(int jobId)
         {
             var candidateIdClaim = User.FindFirstValue("CandidateId");
@@ -26,6 +27,33 @@ namespace JobApplication.API.Controllers
             var application =await _applicationService.Apply(candidateId, jobId);
 
             return Created("", application);
+        }
+
+        [Authorize(Roles = "Recruiter")]
+        [HttpPut("{candidateId}/{jobId}/status")]
+        public async Task<IActionResult> UpdateStatus(int candidateId, int jobId, ApplicationStatus newStatus)
+        {
+            var recruiterIdClaim = User.FindFirstValue("RecruiterId");
+
+            if (recruiterIdClaim == null)
+                return Forbid();
+
+            var recruiterId = int.Parse(recruiterIdClaim);
+
+            try
+            {
+                await _applicationService.UpdateStatus(candidateId, jobId, newStatus, recruiterId);
+
+                return Ok();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

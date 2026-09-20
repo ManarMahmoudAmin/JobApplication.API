@@ -1,5 +1,7 @@
 ﻿using JobApplication.Application.DTOs;
 using JobApplication.Application.Interfaces;
+using JobApplication.Application.Services;
+using JobApplication.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +22,6 @@ namespace JobApplication.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Recruiter")]
         public async Task<IActionResult> AddJob(CreateJobDto createJobDto)
         {
             var recruiterIdClaim =
@@ -34,5 +35,6 @@ namespace JobApplication.API.Controllers
             var job = await _jobService.AddJobAsync(createJobDto,recruiterId);
             return Ok(job);
         }
+
     }
 }

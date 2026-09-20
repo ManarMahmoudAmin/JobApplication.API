@@ -30,5 +30,12 @@ namespace JobApplication.Infrastructure.Repositories
             return await _context.Jobs
                 .FirstOrDefaultAsync(j => j.Id == jobId);
         }
+
+        public async Task<CandidateApplication?> GetApplicationAsync(int candidateId, int jobId)
+        {
+            return await _context.CandidateApplications
+                .Include(ca => ca.Job).FirstOrDefaultAsync(ca =>
+                    ca.CandidateId == candidateId && ca.JobId == jobId);
+        }
     }
 }

@@ -55,8 +55,26 @@ namespace JobApplication.Application.Services
             };
         }
 
-       
+        public async Task UpdateStatus(int candidateId, int jobId, ApplicationStatus newStatus, int recruiterId)
+        {
+            // Get the application
+            var application = await _applicationRepository.GetApplicationAsync(candidateId, jobId);
 
+            // Check if the application exists
+            if (application == null)
+                throw new InvalidOperationException("Application not found.");
+
+            // Check if the recruiter owns the job
+            if (application.Job.RecruiterId != recruiterId)
+                throw new UnauthorizedAccessException("You are not the owner of this job.");
+
+            // Update application status
+            application.ApplicationStatus = newStatus;
+            application.StatusUpdatedAt = DateTime.UtcNow;
+
+            _applicationRepository.Update(application);
+            await _applicationRepository.SaveChangesAsync();
+        }
         private async Task ExistsAsync(int candidateId, int jobId)
         {
             var applied = await _applicationRepository.ExistsAsync(candidateId, jobId);
@@ -66,7 +84,7 @@ namespace JobApplication.Application.Services
             }
         }
 
-       
+
 
     }
 }

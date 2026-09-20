@@ -9,5 +9,6 @@ namespace JobApplication.Application.Interfaces
     {
         Task<bool> ExistsAsync(int candidateId, int jobId);
         Task<Job?> GetJobByIdAsync(int jobId);
+        Task<CandidateApplication?> GetApplicationAsync(int candidateId, int jobId);
     }
 }
