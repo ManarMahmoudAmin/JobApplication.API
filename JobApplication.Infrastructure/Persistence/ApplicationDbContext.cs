@@ -1,4 +1,5 @@
 ﻿using JobApplication.Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace JobApplication.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -22,7 +23,6 @@ namespace JobApplication.Infrastructure.Persistence
         public DbSet<Candidate> Candidates { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<CandidateApplication> CandidateApplications { get; set; }
-
 
     }
 }

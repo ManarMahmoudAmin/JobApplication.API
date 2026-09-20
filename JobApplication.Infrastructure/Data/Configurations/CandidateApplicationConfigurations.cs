@@ -1,5 +1,6 @@
 ﻿using JobApplication.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace JobApplication.Infrastructure.Data.Configurations
 {
     internal class CandidateApplicationConfigurations : IEntityTypeConfiguration<CandidateApplication>
     {
-        public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<CandidateApplication> builder)
+        public void Configure(EntityTypeBuilder<CandidateApplication> builder)
         {
             builder.HasKey(ca => new
             {
