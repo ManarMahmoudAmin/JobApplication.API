@@ -1,6 +1,7 @@
 using JobApplication.Application.Interfaces;
 using JobApplication.Application.Services;
 using JobApplication.Domain.Entities;
+using JobApplication.Infrastructure.Data;
 using JobApplication.Infrastructure.Persistence;
 using JobApplication.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -56,6 +57,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+// Seed roles
+await IdentitySeeder.SeedRolesAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

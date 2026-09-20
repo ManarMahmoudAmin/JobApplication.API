@@ -32,7 +32,12 @@ namespace JobApplication.Application.Services
                 authClaims.Add(
                     new Claim("CandidateId", user.CandidateId.Value.ToString()));
             }
-
+            // Add RecruiterId claim if the user is a recruiter
+            if (user.RecruiterId.HasValue)
+            {
+                authClaims.Add(
+                    new Claim("RecruiterId", user.RecruiterId.Value.ToString()));
+            }
             var userRoles = await userManager.GetRolesAsync(user);
 
             foreach (var role in userRoles)

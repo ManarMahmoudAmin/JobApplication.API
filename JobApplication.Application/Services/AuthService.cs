@@ -7,39 +7,74 @@ namespace JobApplication.Application.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IGenericRepository<Candidate> _candidateRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ITokenService _tokenService;
+            private readonly IGenericRepository<Candidate> _candidateRepository;
+            private readonly IGenericRepository<Recruiter> _recruiterRepository;
+            private readonly UserManager<ApplicationUser> _userManager;
+            private readonly ITokenService _tokenService;
 
-        public AuthService(
-            IGenericRepository<Candidate> candidateRepository,
-            UserManager<ApplicationUser> userManager,
-            ITokenService tokenService)
-        {
-            _candidateRepository = candidateRepository;
-            _userManager = userManager;
-            _tokenService = tokenService;
-        }
-
-        public async Task RegisterAsync(RegisterDto dto)
-        {
-            var candidate = new Candidate
+            public AuthService(
+                IGenericRepository<Candidate> candidateRepository,
+                IGenericRepository<Recruiter> recruiterRepository,
+                UserManager<ApplicationUser> userManager,
+                ITokenService tokenService)
             {
-                Name = dto.Name,
-                CvUrl = dto.CvUrl,
-            };
+                _candidateRepository = candidateRepository;
+                _recruiterRepository = recruiterRepository;
+                _userManager = userManager;
+                _tokenService = tokenService;
+            }
 
-            await _candidateRepository.AddAsync(candidate);
-            await _candidateRepository.SaveChangesAsync();
+
+        public async Task RegisterAsync(RegisterDto registerDto)
+        {
+            //var candidate = new Candidate
+            //{
+            //    Name = dto.Name,
+            //    CvUrl = dto.CvUrl,
+            //};
+
+            //await _candidateRepository.AddAsync(candidate);
+            //await _candidateRepository.SaveChangesAsync();
 
             var user = new ApplicationUser
             {
-                Email = dto.Email,
-                UserName = dto.Email.Split('@')[0],
-                CandidateId = candidate.Id
+                Email = registerDto.Email,
+                UserName = registerDto.Email.Split('@')[0],
+                //CandidateId = candidate.Id
             };
 
-            var result = await _userManager.CreateAsync(user, dto.Password);
+            //Add Recruiter Role + Candidate Role
+            if (registerDto.Role == "Candidate")
+            {
+                var candidate = new Candidate
+                {
+                    Name = registerDto.Name,
+                    CvUrl = registerDto.CvUrl
+                };
+
+                await _candidateRepository.AddAsync(candidate);
+                await _candidateRepository.SaveChangesAsync();
+
+                user.CandidateId = candidate.Id;
+            }
+            else if (registerDto.Role == "Recruiter")
+            {
+                var recruiter = new Recruiter
+                {
+                    Name = registerDto.Name
+                };
+
+                await _recruiterRepository.AddAsync(recruiter);
+                await _recruiterRepository.SaveChangesAsync();
+
+                user.RecruiterId = recruiter.Id;
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid role.");
+            }
+
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (!result.Succeeded)
             {
@@ -49,25 +84,23 @@ namespace JobApplication.Application.Services
 
                 throw new InvalidOperationException(errors);
             }
+            await _userManager.AddToRoleAsync(user, registerDto.Role);
+
         }
 
-        public async Task<string?> LoginAsync(LoginDto dto)
+        public async Task<string?> LoginAsync(LoginDto loginDto)
         {
-            var user = await _userManager.FindByEmailAsync(dto.Email);
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
             if (user == null)
                 return null;
 
-            var validPassword = await _userManager.CheckPasswordAsync(
-                user,
-                dto.Password);
+            var validPassword = await _userManager.CheckPasswordAsync(user, loginDto.Password);
 
             if (!validPassword)
                 return null;
 
-            return await _tokenService.CreateTokenAsync(
-                user,
-                _userManager);
+            return await _tokenService.CreateTokenAsync(user, _userManager);
         }
     }
 }

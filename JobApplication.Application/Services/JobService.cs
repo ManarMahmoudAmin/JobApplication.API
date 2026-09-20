@@ -10,19 +10,27 @@ namespace JobApplication.Application.Services
     public class JobService : IJobService
     {
         private readonly IGenericRepository<Job> _repo;
+        private readonly IGenericRepository<Recruiter> _recruiterRepository;
 
-        public JobService(IGenericRepository<Job> repo)
+        public JobService(IGenericRepository<Job> repo, IGenericRepository<Recruiter> recruiterRepository)
         {
             _repo = repo;
+            _recruiterRepository = recruiterRepository;
         }
 
-        public async Task<JobDto> AddJobAsync(CreateJobDto createJobDto)
+        public async Task<JobDto> AddJobAsync(CreateJobDto createJobDto, int recruiterId)
         {
+            var recruiter = await _recruiterRepository.GetByIdAsync(recruiterId);
+
+            if (recruiter == null)
+                throw new InvalidOperationException("Recruiter not found.");
+
             var job = new Job
             {
                 Title = createJobDto.Title,
                 Description = createJobDto.Description,
-                IsActive = true
+                IsActive = true,
+                RecruiterId = recruiterId
             };
             await _repo.AddAsync(job);
             await _repo.SaveChangesAsync();
