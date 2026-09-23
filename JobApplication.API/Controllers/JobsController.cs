@@ -1,5 +1,6 @@
 ﻿using JobApplication.Application.DTOs;
 using JobApplication.Application.Features.Jobs.Commands;
+using JobApplication.Application.Features.Jobs.Queries.GetJob;
 using JobApplication.Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -46,8 +47,8 @@ namespace JobApplication.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetJob(int id)
         {
-            var job = await _jobService.GetJobAsync(id);
-
+            //var job = await _jobService.GetJobAsync(id);
+            var job = await _mediator.Send(new GetJobQuery { Id = id });
             if(job == null)
                 return NotFound(
                 new { Message = $"Job with ID {id} not found." });
