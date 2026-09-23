@@ -1,4 +1,5 @@
 ﻿using JobApplication.Application.Features.CandidateApplications.Commands.Apply;
+using JobApplication.Application.Features.CandidateApplications.Commands.UpdateStatus;
 using JobApplication.Application.Interfaces;
 using JobApplication.Domain.Enums;
 using MediatR;
@@ -51,7 +52,14 @@ namespace JobApplication.API.Controllers
 
             try
             {
-                await _applicationService.UpdateStatus(candidateId, jobId, newStatus, recruiterId);
+                //await _applicationService.UpdateStatus(candidateId, jobId, newStatus, recruiterId);
+                await _mediator.Send(new UpdateStatusCommand()
+                {
+                    CandidateId = candidateId,
+                    JobId = jobId,
+                    NewStatus = newStatus,
+                    RecruiterId = recruiterId
+                });
 
                 return Ok();
             }
