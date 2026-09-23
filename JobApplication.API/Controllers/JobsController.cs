@@ -1,5 +1,7 @@
 ﻿using JobApplication.Application.DTOs;
 using JobApplication.Application.Features.Jobs.Commands;
+using JobApplication.Application.Features.Jobs.Commands.CloseJob;
+using JobApplication.Application.Features.Jobs.Commands.CreateJob;
 using JobApplication.Application.Features.Jobs.Queries.GetAllJobs;
 using JobApplication.Application.Features.Jobs.Queries.GetJob;
 using JobApplication.Application.Interfaces;
@@ -14,12 +16,11 @@ namespace JobApplication.API.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
-        private readonly IJobService _jobService;
+        //private readonly IJobService _jobService;
         private readonly IMediator _mediator;
 
-        public JobsController(IJobService jobService, IMediator mediator)
+        public JobsController(IMediator mediator)
         {
-            _jobService = jobService;
             _mediator = mediator;
         }
 
@@ -78,7 +79,12 @@ namespace JobApplication.API.Controllers
 
             try
             {
-                await _jobService.CloseAsync(id, recruiterId);
+                //await _jobService.CloseAsync(id, recruiterId);
+                await _mediator.Send(new CloseJobCommand()
+                {
+                    JobId = id,
+                    RecruiterId = recruiterId
+                });
 
                 return NoContent();
             }

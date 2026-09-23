@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace JobApplication.Application.Features.Jobs.Commands
+namespace JobApplication.Application.Features.Jobs.Commands.CreateJob
 {
     internal class CreateJobHandler : IRequestHandler<CreateJobCommand, JobDto>
     {
