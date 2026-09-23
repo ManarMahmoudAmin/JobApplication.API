@@ -1,5 +1,6 @@
 ﻿using JobApplication.Application.DTOs;
 using JobApplication.Application.Features.Jobs.Commands;
+using JobApplication.Application.Features.Jobs.Queries.GetAllJobs;
 using JobApplication.Application.Features.Jobs.Queries.GetJob;
 using JobApplication.Application.Interfaces;
 using MediatR;
@@ -58,7 +59,8 @@ namespace JobApplication.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllJobs()
         {
-            var jobs = await _jobService.GetAllJobsAsync();
+            //var jobs = await _jobService.GetAllJobsAsync();
+            var jobs = await _mediator.Send(new GetAllJobsQuery());
             return Ok(jobs);
         }
 
