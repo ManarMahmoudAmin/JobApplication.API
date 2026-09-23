@@ -1,3 +1,4 @@
+using JobApplication.Application;
 using JobApplication.Application.Interfaces;
 using JobApplication.Application.Services;
 using JobApplication.Domain.Entities;
@@ -55,6 +56,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ApplicationAssemblyMarker).Assembly));
 
 var app = builder.Build();
 
