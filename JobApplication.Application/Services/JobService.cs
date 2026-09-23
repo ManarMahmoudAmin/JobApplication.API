@@ -9,12 +9,12 @@ namespace JobApplication.Application.Services
 {
     public class JobService : IJobService
     {
-        private readonly IGenericRepository<Job> _repo;
+        private readonly IGenericRepository<Job> _jobRepository;
         private readonly IGenericRepository<Recruiter> _recruiterRepository;
 
         public JobService(IGenericRepository<Job> repo, IGenericRepository<Recruiter> recruiterRepository)
         {
-            _repo = repo;
+            _jobRepository = repo;
             _recruiterRepository = recruiterRepository;
         }
 
@@ -32,8 +32,8 @@ namespace JobApplication.Application.Services
                 IsActive = true,
                 RecruiterId = recruiterId
             };
-            await _repo.AddAsync(job);
-            await _repo.SaveChangesAsync();
+            await _jobRepository.AddAsync(job);
+            await _jobRepository.SaveChangesAsync();
 
             return new JobDto
             {
@@ -44,9 +44,35 @@ namespace JobApplication.Application.Services
             };
         }
 
+        public async Task<JobDto> GetJobAsync(int jobId)
+        {
+            var job = await _jobRepository.GetByIdAsync(jobId);
+            if (job == null)
+                throw new InvalidOperationException("Job not found.");
+            return new JobDto
+            {
+                Id = job.Id,
+                Title = job.Title,
+                Description = job.Description,
+                IsActive = job.IsActive
+            };
+        }
+
+        public async Task<IEnumerable<JobDto>> GetAllJobsAsync()
+        {
+            var jobs = await _jobRepository.GetAllAsync();
+            return jobs.Select(job => new JobDto
+            {
+                Id = job.Id,
+                Title = job.Title,
+                Description = job.Description,
+                IsActive = job.IsActive
+            });
+        }
+
         public async Task CloseAsync(int jobId, int recruiterId)
         {
-            var job = await _repo.GetByIdAsync(jobId);
+            var job = await _jobRepository.GetByIdAsync(jobId);
 
             if (job == null)
                 throw new InvalidOperationException(
@@ -65,8 +91,8 @@ namespace JobApplication.Application.Services
             job.ClosedAt = DateTime.UtcNow;
             job.ClosedBy = recruiterId;
 
-            _repo.Update(job);
-            await _repo.SaveChangesAsync();
+            _jobRepository.Update(job);
+            await _jobRepository.SaveChangesAsync();
         }
     }
 }

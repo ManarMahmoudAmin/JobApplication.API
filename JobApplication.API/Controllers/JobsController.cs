@@ -6,7 +6,6 @@ using System.Security.Claims;
 
 namespace JobApplication.API.Controllers
 {
-    [Authorize(Roles = "Recruiter")]
     [Route("api/[controller]")]
     [ApiController]
     public class JobsController : ControllerBase
@@ -18,6 +17,7 @@ namespace JobApplication.API.Controllers
             _jobService = jobService;
         }
 
+        [Authorize(Roles = "Recruiter")]
         [HttpPost]
         public async Task<IActionResult> AddJob(CreateJobDto createJobDto)
         {
@@ -33,6 +33,25 @@ namespace JobApplication.API.Controllers
             return Ok(job);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetJob(int id)
+        {
+            var job = await _jobService.GetJobAsync(id);
+
+            if(job == null)
+                return NotFound(
+                new { Message = $"Job with ID {id} not found." });
+            return Ok(job);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllJobs()
+        {
+            var jobs = await _jobService.GetAllJobsAsync();
+            return Ok(jobs);
+        }
+
+        [Authorize(Roles = "Recruiter")]
         [HttpPut("{id}/close")]
         public async Task<IActionResult> CloseJob(int id)
         {
