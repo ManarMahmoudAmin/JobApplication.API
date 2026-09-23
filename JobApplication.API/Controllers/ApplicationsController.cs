@@ -1,5 +1,7 @@
-﻿using JobApplication.Application.Interfaces;
+﻿using JobApplication.Application.Features.CandidateApplications.Commands.Apply;
+using JobApplication.Application.Interfaces;
 using JobApplication.Domain.Enums;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -9,13 +11,15 @@ namespace JobApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ApplicationController : ControllerBase
+    public class ApplicationsController : ControllerBase
     {
         private readonly IApplicationService _applicationService;
+        private readonly IMediator _mediator;
 
-        public ApplicationController(IApplicationService applicationService)
+        public ApplicationsController(IApplicationService applicationService, IMediator mediator)
         {
             _applicationService = applicationService;
+            _mediator = mediator;
         }
 
         [HttpPost("apply/{jobId}")]
@@ -24,7 +28,12 @@ namespace JobApplication.API.Controllers
         {
             var candidateIdClaim = User.FindFirstValue("CandidateId");
             var candidateId = int.Parse(candidateIdClaim);
-            var application =await _applicationService.Apply(candidateId, jobId);
+            //var application =await _applicationService.Apply(candidateId, jobId);
+            var application = await _mediator.Send(new ApplyCommand()
+            {
+                CandidateId = candidateId,
+                JobId = jobId
+            });
 
             return Created("", application);
         }
@@ -58,7 +67,7 @@ namespace JobApplication.API.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Candidate")]
-        public async Task<IActionResult> Cancel(int id)
+        public async Task<IActionResult> CancelApplication(int id)
         {
             var candidateIdClaim =
                 User.FindFirstValue("CandidateId");
