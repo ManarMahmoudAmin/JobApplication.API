@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\CandidateApplications\Commands\CancelApplication\" />
     <Folder Include="Features\CandidateApplications\Queries\" />
   </ItemGroup>
 

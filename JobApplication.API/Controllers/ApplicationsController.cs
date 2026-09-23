@@ -1,4 +1,5 @@
 ﻿using JobApplication.Application.Features.CandidateApplications.Commands.Apply;
+using JobApplication.Application.Features.CandidateApplications.Commands.CancelApplication;
 using JobApplication.Application.Features.CandidateApplications.Commands.UpdateStatus;
 using JobApplication.Application.Interfaces;
 using JobApplication.Domain.Enums;
@@ -87,7 +88,12 @@ namespace JobApplication.API.Controllers
 
             try
             {
-                await _applicationService.Cancel(id, candidateId);
+                //await _applicationService.Cancel(id, candidateId);
+                await _mediator.Send(new CancelApplicationCommand()
+                {
+                    ApplicationId = id,
+                    CandidateId = candidateId
+                });
 
                 return NoContent();
             }
