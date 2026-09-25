@@ -12,10 +12,14 @@ namespace JobApplication.Application.Features.CandidateApplications.Commands.App
     internal class ApplyHandler : IRequestHandler<ApplyCommand, CandidateApplicationDto>
     {
         private readonly IApplicationRepository _applicationRepository;
+        private readonly IBackgroundJobScheduler _backgroundJobScheduler;
 
-        public ApplyHandler(IApplicationRepository applicationRepository)
+        public ApplyHandler(IApplicationRepository applicationRepository,
+            IBackgroundJobScheduler backgroundJobScheduler)
         {
             _applicationRepository = applicationRepository;
+            _backgroundJobScheduler = backgroundJobScheduler;
+
         }
 
         public async Task<CandidateApplicationDto> Handle(ApplyCommand request, CancellationToken cancellationToken)
@@ -45,6 +49,8 @@ namespace JobApplication.Application.Features.CandidateApplications.Commands.App
 
             await _applicationRepository.AddAsync(application);
             await _applicationRepository.SaveChangesAsync();
+
+            _backgroundJobScheduler.Enqueue<INotificationService>(b => b.NotifyRecruiter(application.Id));
 
             return new CandidateApplicationDto
             {

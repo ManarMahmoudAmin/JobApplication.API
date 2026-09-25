@@ -1,3 +1,4 @@
+using Hangfire;
 using JobApplication.Application;
 using JobApplication.Application.Interfaces;
 using JobApplication.Application.Services;
@@ -5,6 +6,7 @@ using JobApplication.Domain.Entities;
 using JobApplication.Infrastructure.Data;
 using JobApplication.Infrastructure.Persistence;
 using JobApplication.Infrastructure.Repositories;
+using JobApplication.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -52,13 +54,22 @@ builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<IApplicationService, ApplicationService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<INotificationService, EmailNotificationService>();
+builder.Services.AddScoped<IBackgroundJobScheduler, HangfireBackgroundJobScheduler>();
 
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ApplicationAssemblyMarker).Assembly));
 
+builder.Services.AddHangfire(config => config
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("HangfireConnection")));
+
 var app = builder.Build();
+app.UseHangfireDashboard("/hangfire");
 
 // Seed roles
 await IdentitySeeder.SeedRolesAsync(app.Services);
