@@ -9,5 +9,7 @@ namespace JobApplication.Application.Interfaces
     {
         void Enqueue<T>(Expression<Action<T>> methodCall);
         void Schedule<T>(Expression<Action<T>> methodCall, TimeSpan delay);
+        void ScheduleRecurringJobs();
+
     }
 }

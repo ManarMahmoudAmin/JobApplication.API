@@ -24,5 +24,14 @@ namespace JobApplication.Infrastructure.Services
         {
             _backgroundJobClient.Schedule<T>(methodCall, delay);
         }
+
+        public void ScheduleRecurringJobs()
+        {
+            RecurringJob.AddOrUpdate<IRecurringJobService>(
+                "auto-close-old-jobs",
+                service => service.AutoCloseOldJobsAsync(),
+                Cron.Daily
+            );
+        }
     }
 }

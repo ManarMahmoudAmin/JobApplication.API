@@ -56,6 +56,8 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<INotificationService, EmailNotificationService>();
 builder.Services.AddScoped<IBackgroundJobScheduler, HangfireBackgroundJobScheduler>();
+builder.Services.AddScoped<IRecurringJobService, RecurringJobService>();
+
 
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -67,9 +69,18 @@ builder.Services.AddHangfire(config => config
     .UseRecommendedSerializerSettings()
     .UseSqlServerStorage(
         builder.Configuration.GetConnectionString("HangfireConnection")));
+builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 app.UseHangfireDashboard("/hangfire");
+
+using (var scope = app.Services.CreateScope())
+{
+    var scheduler =
+        scope.ServiceProvider.GetRequiredService<IBackgroundJobScheduler>();
+
+    scheduler.ScheduleRecurringJobs();
+}
 
 // Seed roles
 await IdentitySeeder.SeedRolesAsync(app.Services);

@@ -30,7 +30,9 @@ namespace JobApplication.Application.Services
                 Title = createJobDto.Title,
                 Description = createJobDto.Description,
                 IsActive = true,
-                RecruiterId = recruiterId
+                RecruiterId = recruiterId,
+                CreatedAt = DateTime.UtcNow
+                
             };
             await _jobRepository.AddAsync(job);
             await _jobRepository.SaveChangesAsync();
